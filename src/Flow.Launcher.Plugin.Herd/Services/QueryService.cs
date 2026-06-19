@@ -36,6 +36,22 @@ public sealed class QueryService
         return matched.Select(group => ToResult(group, term)).ToList();
     }
 
+    /// <summary>A single result shown when no groups exist yet; its action opens settings.</summary>
+    public static List<Result> NoGroupsHint(string defaultIcon, Action openSettings) => new()
+    {
+        new Result
+        {
+            Title = "No app groups yet",
+            SubTitle = "Press Enter to open Herd settings and create your first group",
+            IcoPath = defaultIcon,
+            Action = _ =>
+            {
+                openSettings();
+                return true;
+            },
+        },
+    };
+
     private int ScoreGroup(string term, AppGroup group)
     {
         var score = _score(term, group.Name);

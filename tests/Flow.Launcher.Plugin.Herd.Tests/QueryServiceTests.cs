@@ -140,4 +140,20 @@ public class QueryServiceTests
         await Assert.That(hide).IsTrue();
         await Assert.That(launched.Single().Name).IsEqualTo("Dev");
     }
+
+    [Test]
+    public async Task NoGroupsHint_returns_single_result_that_opens_settings()
+    {
+        var opened = false;
+
+        var results = QueryService.NoGroupsHint(DefaultIcon, () => opened = true);
+
+        await Assert.That(results.Count).IsEqualTo(1);
+        await Assert.That(results[0].IcoPath).IsEqualTo(DefaultIcon);
+
+        var hide = results[0].Action!(null!);
+
+        await Assert.That(hide).IsTrue();
+        await Assert.That(opened).IsTrue();
+    }
 }
