@@ -8,9 +8,15 @@ internal sealed class FakeProcessLauncher : IProcessLauncher
 {
     public List<LaunchRequest> Launched { get; } = new();
     public HashSet<string> FailFor { get; } = new();
+    public HashSet<string> CancelFor { get; } = new();
 
     public void Launch(LaunchRequest request)
     {
+        if (CancelFor.Contains(request.FileName))
+        {
+            throw new OperationCanceledException($"user cancelled {request.FileName}");
+        }
+
         if (FailFor.Contains(request.FileName))
         {
             throw new InvalidOperationException($"cannot launch {request.FileName}");
@@ -131,6 +137,37 @@ public class GroupLauncherTests
         await Assert.That(request.Arguments).IsEqualTo("--flag");
         await Assert.That(request.WorkingDirectory).IsEqualTo(@"C:\tools");
         await Assert.That(request.RunAsAdmin).IsTrue();
+    }
+
+    [Test]
+    public async Task Cancelled_launch_is_neither_counted_nor_a_failure()
+    {
+        var fake = new FakeProcessLauncher();
+        fake.CancelFor.Add(@"C:\elevated.exe");
+        var launcher = new GroupLauncher(fake);
+        var group = GroupWith(LaunchMode.Parallel, 0,
+            new AppEntry { Target = @"C:\good.exe" },
+            new AppEntry { Target = @"C:\elevated.exe" });
+
+        var result = await launcher.LaunchAsync(group);
+
+        await Assert.That(result.Launched).IsEqualTo(1);
+        await Assert.That(result.Failures.Count).IsEqualTo(0);
+    }
+
+    [Test]
+    public async Task Negative_delay_is_clamped_to_zero()
+    {
+        var fake = new FakeProcessLauncher();
+        var delays = new List<int>();
+        var launcher = new GroupLauncher(fake, ms => { delays.Add(ms); return Task.CompletedTask; });
+        var group = GroupWith(LaunchMode.Sequential, -500,
+            new AppEntry { Target = "1" },
+            new AppEntry { Target = "2" });
+
+        await launcher.LaunchAsync(group);
+
+        await Assert.That(delays).IsEquivalentTo(new[] { 0 });
     }
 
     [Test]

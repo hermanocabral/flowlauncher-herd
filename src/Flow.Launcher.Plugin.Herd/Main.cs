@@ -52,8 +52,9 @@ public class Main : IAsyncPlugin, ISettingProvider
 
     private bool LaunchGroup(AppGroup group)
     {
-        // Fire-and-forget so the Flow window hides immediately; sequential delays must not block it.
-        _ = RunLaunchAsync(group);
+        // Run off the UI thread: a synchronous shell launch (e.g. a blocking UAC prompt) must
+        // not freeze Flow, and sequential delays must not block it. Returning true hides Flow now.
+        _ = Task.Run(() => RunLaunchAsync(group));
         return true;
     }
 

@@ -39,6 +39,10 @@ public sealed class GroupLauncher
                 _launcher.Launch(BuildRequest(apps[i]));
                 launched++;
             }
+            catch (OperationCanceledException)
+            {
+                // User declined elevation — not launched, but not an error to report.
+            }
             catch (Exception ex)
             {
                 failures.Add(new LaunchFailure(apps[i], ex));
@@ -47,7 +51,7 @@ public sealed class GroupLauncher
             var hasNext = i < apps.Count - 1;
             if (group.LaunchMode == LaunchMode.Sequential && hasNext)
             {
-                await _delay(group.DelayMs);
+                await _delay(Math.Max(0, group.DelayMs));
             }
         }
 
