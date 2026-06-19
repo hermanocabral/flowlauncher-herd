@@ -3,6 +3,8 @@
   <PropertyGroup>
     <TargetFramework>net7.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
+    <!-- WinForms supplies a folder picker; net7.0 WPF has no OpenFolderDialog. -->
+    <UseWindowsForms>true</UseWindowsForms>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <LangVersion>latest</LangVersion>
@@ -24,6 +26,12 @@
     <DebugSymbols>false</DebugSymbols>
     <DebugType>None</DebugType>
   </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Avoid WPF/WinForms type clashes (Control, UserControl, MessageBox); the folder
+         dialog is referenced fully-qualified instead. -->
+    <Using Remove="System.Windows.Forms" />
+  </ItemGroup>
 
   <ItemGroup>
     <Content Include="plugin.json">

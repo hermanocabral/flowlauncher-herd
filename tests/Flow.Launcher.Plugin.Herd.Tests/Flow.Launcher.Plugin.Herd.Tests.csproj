@@ -4,6 +4,9 @@
     <!-- net9.0-windows so we can reference the net7.0-windows WPF plugin assembly. -->
     <TargetFramework>net9.0-windows</TargetFramework>
     <OutputType>Exe</OutputType>
+    <!-- Brings the Windows Desktop runtime so the test host can load the plugin's WPF/WinForms types. -->
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <IsPackable>false</IsPackable>

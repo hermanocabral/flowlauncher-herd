@@ -61,6 +61,17 @@ public class AppEntry : ObservableObject
         set => SetProperty(ref _enabled, value);
     }
 
+    /// <summary>Returns an independent copy of this entry.</summary>
+    public AppEntry Clone() => new()
+    {
+        Target = Target,
+        DisplayName = DisplayName,
+        Arguments = Arguments,
+        WorkingDirectory = WorkingDirectory,
+        RunAsAdmin = RunAsAdmin,
+        Enabled = Enabled,
+    };
+
     /// <summary>Human-readable label: the display name when set, otherwise derived from the target.</summary>
     [JsonIgnore]
     public string DisplayLabel

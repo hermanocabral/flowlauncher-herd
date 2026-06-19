@@ -1,5 +1,8 @@
+using System.Windows.Controls;
 using Flow.Launcher.Plugin.Herd.Models;
 using Flow.Launcher.Plugin.Herd.Services;
+using Flow.Launcher.Plugin.Herd.ViewModels;
+using Flow.Launcher.Plugin.Herd.Views;
 
 namespace Flow.Launcher.Plugin.Herd;
 
@@ -8,7 +11,7 @@ namespace Flow.Launcher.Plugin.Herd;
 /// queries/launches; all behaviour lives in <see cref="QueryService"/> and
 /// <see cref="GroupLauncher"/>.
 /// </summary>
-public class Main : IAsyncPlugin
+public class Main : IAsyncPlugin, ISettingProvider
 {
     internal const string DefaultIcon = @"Images\icon.png";
 
@@ -39,6 +42,12 @@ public class Main : IAsyncPlugin
         }
 
         return Task.FromResult(_query.Query(query.Search, _settings.Groups));
+    }
+
+    public Control CreateSettingPanel()
+    {
+        var vm = new SettingsViewModel(_settings, () => _context.API.SaveSettingJsonStorage<HerdSettings>());
+        return new SettingsControl(vm);
     }
 
     private bool LaunchGroup(AppGroup group)

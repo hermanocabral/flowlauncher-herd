@@ -56,4 +56,24 @@ public class AppGroup : ObservableObject
     /// <summary>Apps that are enabled, in order.</summary>
     [JsonIgnore]
     public IEnumerable<AppEntry> EnabledApps => Apps.Where(a => a.Enabled);
+
+    /// <summary>Returns a deep copy with a fresh <see cref="Id"/> and cloned apps.</summary>
+    public AppGroup Clone()
+    {
+        var clone = new AppGroup
+        {
+            Name = Name,
+            Description = Description,
+            IconPath = IconPath,
+            LaunchMode = LaunchMode,
+            DelayMs = DelayMs,
+        };
+
+        foreach (var app in Apps)
+        {
+            clone.Apps.Add(app.Clone());
+        }
+
+        return clone;
+    }
 }
