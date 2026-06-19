@@ -25,15 +25,14 @@ public sealed class QueryService
     {
         var term = search?.Trim() ?? string.Empty;
 
-        IEnumerable<AppGroup> matched = term.Length == 0
-            ? groups
+        IEnumerable<(AppGroup group, int score)> matched = term.Length == 0
+            ? groups.Select(group => (group, 0))
             : groups
                 .Select(group => (group, score: ScoreGroup(term, group)))
                 .Where(x => x.score > 0)
-                .OrderByDescending(x => x.score)
-                .Select(x => x.group);
+                .OrderByDescending(x => x.score);
 
-        return matched.Select(group => ToResult(group, term)).ToList();
+        return matched.Select(x => ToResult(x.group, x.score)).ToList();
     }
 
     /// <summary>A single result shown when no groups exist yet; its action opens settings.</summary>
@@ -63,15 +62,16 @@ public sealed class QueryService
         return score;
     }
 
-    private Result ToResult(AppGroup group, string term)
+    private Result ToResult(AppGroup group, int score)
     {
         return new Result
         {
             Title = group.Name,
             SubTitle = BuildSubTitle(group),
             IcoPath = string.IsNullOrWhiteSpace(group.IconPath) ? _defaultIcon : group.IconPath,
-            Score = term.Length == 0 ? 0 : ScoreGroup(term, group),
+            Score = score,
             ContextData = group,
+            AutoCompleteText = group.Name,
             TitleToolTip = group.Name,
             SubTitleToolTip = BuildAppList(group),
             Action = _ => _launch(group),

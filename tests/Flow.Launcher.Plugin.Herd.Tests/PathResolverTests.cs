@@ -48,6 +48,17 @@ public class PathResolverTests
     }
 
     [Test]
+    public async Task ResolveWorkingDirectory_for_a_folder_target_uses_the_folder_itself()
+    {
+        var folder = Environment.GetEnvironmentVariable("SystemRoot")!; // e.g. C:\Windows (a real directory)
+        var entry = new AppEntry { Target = folder };
+
+        var dir = PathResolver.ResolveWorkingDirectory(entry);
+
+        await Assert.That(dir).IsEqualTo(folder);
+    }
+
+    [Test]
     public async Task ResolveWorkingDirectory_is_null_for_url()
     {
         var entry = new AppEntry { Target = "https://example.com" };

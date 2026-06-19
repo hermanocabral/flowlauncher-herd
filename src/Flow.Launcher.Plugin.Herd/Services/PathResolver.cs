@@ -33,6 +33,12 @@ public static class PathResolver
             return null;
         }
 
+        // A folder target starts in the folder itself, not its parent.
+        if (Directory.Exists(target))
+        {
+            return target;
+        }
+
         var directory = Path.GetDirectoryName(target);
         return string.IsNullOrEmpty(directory) ? null : directory;
     }

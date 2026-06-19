@@ -44,6 +44,18 @@ public class AppEntryTests
 
         await Assert.That(raised).Contains(nameof(AppEntry.Target));
     }
+
+    [Test]
+    public async Task Setting_Target_also_raises_DisplayLabel_change()
+    {
+        var entry = new AppEntry();
+        var raised = new List<string?>();
+        entry.PropertyChanged += (_, args) => raised.Add(args.PropertyName);
+
+        entry.Target = @"C:\tools\foo.exe";
+
+        await Assert.That(raised).Contains(nameof(AppEntry.DisplayLabel));
+    }
 }
 
 public class AppGroupTests

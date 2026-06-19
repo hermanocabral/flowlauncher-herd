@@ -142,6 +142,16 @@ public class QueryServiceTests
     }
 
     [Test]
+    public async Task Result_autocompletes_to_group_name()
+    {
+        var service = NewService(out _);
+
+        var results = service.Query("", new List<AppGroup> { Group("Dev") });
+
+        await Assert.That(results[0].AutoCompleteText).IsEqualTo("Dev");
+    }
+
+    [Test]
     public async Task NoGroupsHint_returns_single_result_that_opens_settings()
     {
         var opened = false;

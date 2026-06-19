@@ -17,7 +17,13 @@ public class AppEntry : ObservableObject
     public string Target
     {
         get => _target;
-        set => SetProperty(ref _target, value);
+        set
+        {
+            if (SetProperty(ref _target, value))
+            {
+                OnPropertyChanged(nameof(DisplayLabel));
+            }
+        }
     }
 
     /// <summary>Optional friendly name; falls back to the target's file name (see <see cref="DisplayLabel"/>).</summary>
