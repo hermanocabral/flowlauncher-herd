@@ -1,6 +1,6 @@
 # Taskfile for Herd — https://taskfile.dev
-# go-task ships a cross-platform POSIX-sh interpreter, so these recipes run the
-# same on Windows/macOS/Linux. Windows-only steps shell out to PowerShell.
+# Flow Launcher is Windows-only, so these recipes target Windows: go-task's built-in
+# POSIX-sh interpreter runs the simple steps and Windows-specific steps shell out to PowerShell.
 version: "3"
 
 vars:

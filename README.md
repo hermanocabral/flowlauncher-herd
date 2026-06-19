@@ -136,7 +136,7 @@ task dev        # install locally + restart Flow
 task lint       # verify formatting
 ```
 
-The plugin targets `net7.0-windows` (so it loads on a wide range of Flow versions). Tests use
+The plugin targets `net8.0-windows` (LTS; loads on current Flow Launcher's .NET 8/9 runtime). Tests use
 [TUnit](https://tunit.dev/) on the Microsoft.Testing.Platform. Core logic — path resolution,
 launch orchestration, query building, and the settings view-model — is covered by unit tests,
 with process launching abstracted behind an interface so nothing is spawned during tests.
