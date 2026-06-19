@@ -64,18 +64,58 @@ public sealed class QueryService
 
     private Result ToResult(AppGroup group, int score)
     {
+        var icon = string.IsNullOrWhiteSpace(group.IconPath) ? _defaultIcon : group.IconPath;
         return new Result
         {
             Title = group.Name,
             SubTitle = BuildSubTitle(group),
-            IcoPath = string.IsNullOrWhiteSpace(group.IconPath) ? _defaultIcon : group.IconPath,
+            IcoPath = icon,
             Score = score,
             ContextData = group,
             AutoCompleteText = group.Name,
             TitleToolTip = group.Name,
             SubTitleToolTip = BuildAppList(group),
+            Preview = new Result.PreviewInfo
+            {
+                PreviewImagePath = icon,
+                Description = BuildPreviewDescription(group),
+            },
             Action = _ => _launch(group),
         };
+    }
+
+    /// <summary>The richer text shown in the preview panel: a launch summary plus the app list.</summary>
+    private static string BuildPreviewDescription(AppGroup group)
+    {
+        var total = group.Apps.Count;
+        var mode = group.LaunchMode == LaunchMode.Sequential
+            ? $"one by one ({group.DelayMs} ms apart)"
+            : "all at once";
+        var header = $"Launches {total} app{(total == 1 ? string.Empty : "s")} {mode}.";
+
+        if (total == 0)
+        {
+            return "No apps yet — open settings to add some.";
+        }
+
+        var lines = group.Apps.Select(app =>
+        {
+            var markers = new List<string>();
+            if (app.RunAsAdmin)
+            {
+                markers.Add("as admin");
+            }
+
+            if (!app.Enabled)
+            {
+                markers.Add("disabled");
+            }
+
+            var suffix = markers.Count > 0 ? $"  — {string.Join(", ", markers)}" : string.Empty;
+            return $"• {app.DisplayLabel}{suffix}";
+        });
+
+        return header + Environment.NewLine + Environment.NewLine + string.Join(Environment.NewLine, lines);
     }
 
     private static string BuildSubTitle(AppGroup group) =>

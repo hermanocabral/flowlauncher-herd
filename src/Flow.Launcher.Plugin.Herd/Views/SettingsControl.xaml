@@ -13,6 +13,7 @@
         <views:BooleanToVisibilityConverter x:Key="InverseBoolToVis" Invert="True" />
         <views:EnumToBooleanConverter x:Key="EnumBool" />
         <views:CountToVisibilityConverter x:Key="EmptyToVis" />
+        <views:GroupIconConverter x:Key="GroupIcon" />
 
         <Style TargetType="TextBlock" x:Key="FieldLabel">
             <Setter Property="Margin" Value="0,10,0,3" />
@@ -52,9 +53,17 @@
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
                             <Border Grid.Column="0" Width="30" Height="30" CornerRadius="6"
-                                    Background="#33808080" Margin="0,0,9,0">
-                                <TextBlock Text="&#xE71D;" FontFamily="Segoe MDL2 Assets"
-                                           FontSize="15" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    Background="#22808080" Margin="0,0,9,0">
+                                <Image Width="22" Height="22" Stretch="Uniform"
+                                       RenderOptions.BitmapScalingMode="HighQuality">
+                                    <Image.Source>
+                                        <MultiBinding Converter="{StaticResource GroupIcon}">
+                                            <Binding Path="IconPath" />
+                                            <Binding Path="Apps.Count" />
+                                            <Binding Path="." />
+                                        </MultiBinding>
+                                    </Image.Source>
+                                </Image>
                             </Border>
                             <StackPanel Grid.Column="1" VerticalAlignment="Center">
                                 <TextBlock Text="{Binding Name}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />

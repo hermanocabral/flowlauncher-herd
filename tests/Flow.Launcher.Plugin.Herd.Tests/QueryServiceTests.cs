@@ -152,6 +152,38 @@ public class QueryServiceTests
     }
 
     [Test]
+    public async Task Preview_lists_apps_and_sequential_launch_summary()
+    {
+        var service = NewService(out _);
+        var group = new AppGroup { Name = "Dev", LaunchMode = LaunchMode.Sequential, DelayMs = 200 };
+        group.Apps.Add(new AppEntry { Target = @"C:\code.exe" });
+        group.Apps.Add(new AppEntry { Target = @"C:\chrome.exe", RunAsAdmin = true });
+        group.Apps.Add(new AppEntry { Target = @"C:\slack.exe", Enabled = false });
+
+        var preview = service.Query("", new List<AppGroup> { group })[0].Preview;
+
+        await Assert.That(preview).IsNotNull();
+        await Assert.That(preview.Description).Contains("code");
+        await Assert.That(preview.Description).Contains("chrome");
+        await Assert.That(preview.Description).Contains("one by one");
+        await Assert.That(preview.Description).Contains("200");
+        await Assert.That(preview.Description).Contains("admin");
+        await Assert.That(preview.Description).Contains("disabled");
+    }
+
+    [Test]
+    public async Task Preview_says_all_at_once_for_parallel_groups()
+    {
+        var service = NewService(out _);
+        var group = new AppGroup { Name = "Dev", LaunchMode = LaunchMode.Parallel };
+        group.Apps.Add(new AppEntry { Target = @"C:\a.exe" });
+
+        var preview = service.Query("", new List<AppGroup> { group })[0].Preview;
+
+        await Assert.That(preview.Description).Contains("all at once");
+    }
+
+    [Test]
     public async Task NoGroupsHint_returns_single_result_that_opens_settings()
     {
         var opened = false;
