@@ -58,9 +58,10 @@ If you have no groups yet, Herd shows a **"No app groups yet"** result — press
 
 Open **Flow Launcher Settings → Plugins → Herd**.
 
-- The **left panel** lists your groups, with **Add**, **Duplicate**, and **Delete** buttons.
+- The **left panel** lists your groups (each with an app count), with **＋ New group**,
+  **Duplicate**, and **Delete** buttons.
 - Selecting a group shows its editor on the **right**: name, description, optional custom
-  icon, launch mode and delay, and the table of apps.
+  icon, launch mode, and the list of apps.
 
 Changes are saved automatically — structural edits immediately, and field edits when you close
 the settings window.
@@ -71,32 +72,33 @@ the settings window.
 | ------------ | -------------------------------------------------------------------- |
 | Name         | Shown in the launcher and matched against your search text.          |
 | Description  | Shown in the result subtitle and the hover tooltip.                  |
-| Custom icon  | Optional `.png`/`.ico`/`.jpg` shown instead of the default sheep.    |
-| Launch mode  | **Parallel** or **Sequential** (see [Launch modes](#launch-modes)).  |
-| Delay (ms)   | Pause between launches in sequential mode.                           |
+| Custom icon  | Optional `.png`/`.ico`/`.jpg` shown instead of the default sheep (**Change… / Use default**). |
+| Launch       | **All at once**, or **one by one** with a delay between each (see [Launch modes](#launch-modes)). |
 
 ## App options
 
-Each row in a group's app table:
+Each app is a card showing a tick (enabled), its name, and its target path. Click a card to
+expand it and edit:
 
 | Field        | Description                                                                       |
 | ------------ | --------------------------------------------------------------------------------- |
-| On           | Enable/disable the app without removing it from the group.                        |
-| Target       | An executable, file, folder, or URL. Environment variables like `%USERPROFILE%` are expanded. |
+| Enabled      | The tick at the front of the card — include or skip the app without removing it.  |
 | Name         | Friendly label. Defaults to the target's file name.                               |
+| Target       | An executable, file, folder, or URL. Environment variables like `%USERPROFILE%` are expanded. **Browse…** picks a file. |
 | Arguments    | Command-line arguments passed to the target.                                      |
-| Working dir  | Folder to start in. **Leave empty to default to the app's own folder.**           |
-| Admin        | Launch elevated. Windows shows a UAC prompt each time.                            |
+| Working dir  | Folder to start in (**Browse…**). **Leave empty to use the app's own folder.**    |
+| Run as administrator | Launch elevated. Windows shows a UAC prompt each time.                    |
 
-Toolbar buttons: **Add file…**, **Add folder…**, **Add URL**, **Set working dir…**,
-**Move up**, **Move down**, **Remove**. Order matters in sequential mode.
+Add apps with **＋ Add app** (File / Folder / Web link). Inside each expanded card,
+**Move up** / **Move down** reorder and **Remove** deletes — order matters when launching
+"one by one".
 
 ## Launch modes
 
-- **Parallel** *(default)* — every enabled app starts immediately, in one burst.
-- **Sequential** — apps start in table order, pausing **Delay (ms)** between each. Useful when
-  one app must be running before another (e.g. a VPN before a remote client, or a server before
-  its dashboard).
+- **All at once** *(default)* — every enabled app starts immediately, in one burst.
+- **One by one** — apps start in list order, pausing the configured number of milliseconds
+  between each. Useful when one app must be running before another (e.g. a VPN before a remote
+  client, or a server before its dashboard).
 
 A disabled app is skipped. If one app fails to launch, the rest still launch and Herd shows a
 message naming what failed.
@@ -127,8 +129,9 @@ all work the same way:
 - That's expected for **Admin**-flagged apps — Windows requires a UAC confirmation per launch.
   Untick **Admin** if the app doesn't actually need elevation.
 
-**Sequential apps start too fast / in the wrong order**
-- Increase **Delay (ms)** and use **Move up/down** to set the order.
+**"One by one" apps start too fast / in the wrong order**
+- Increase the **wait … ms between** value, and use **Move up / Move down** (inside each app
+  card) to set the order.
 
 **My keyword collides with another plugin**
 - Change it under **Settings → Plugins → Herd → Action Keywords**.

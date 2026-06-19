@@ -89,29 +89,29 @@ it to jump straight to settings and create your first group.
 ## Configuring groups
 
 Open **Flow Launcher Settings → Plugins → Herd**. On the left is your list of groups
-(**Add / Duplicate / Delete**). Select a group to edit it on the right:
+(**＋ New group / Duplicate / Delete**). Select a group to edit it on the right:
 
 | Group field   | What it does                                                              |
 | ------------- | ------------------------------------------------------------------------- |
 | Name          | Shown in the launcher and matched against your search.                    |
 | Description   | Shown in the result subtitle and tooltip.                                 |
 | Custom icon   | Optional image shown instead of the default sheep.                        |
-| Launch mode   | **Parallel** (all at once) or **Sequential** (one by one).                |
-| Delay (ms)    | Pause between launches in sequential mode.                                |
+| Launch        | **All at once**, or **one by one** with a delay between each.             |
 
-Each app in the group's table supports:
+Each app is a card — click it to expand its options:
 
 | App field         | What it does                                                                    |
 | ----------------- | ------------------------------------------------------------------------------- |
-| On                | Enable/disable without removing the app from the group.                         |
+| Enabled           | Tick/untick to include or skip the app without removing it.                     |
 | Target            | Path to an executable/file/folder, or a URL.                                    |
 | Name              | Friendly label (defaults to the target's file name).                            |
 | Arguments         | Command-line arguments passed on launch.                                        |
 | Working dir       | Folder to start in. **Leave empty to use the app's own folder.**                |
 | Admin             | Launch elevated (triggers a UAC prompt).                                        |
 
-Use **Add file… / Add folder… / Add URL** to add rows, **Move up/down** to reorder (matters in
-sequential mode), and **Set working dir…** to pick a folder for the selected app.
+Click **＋ Add app** (File / Folder / Web link) to add an app. Click an app to expand it and edit
+its name, target, arguments, working directory and run-as-admin — and to move or remove it. Order
+matters when the group launches "one by one".
 
 ### Changing the keyword
 
