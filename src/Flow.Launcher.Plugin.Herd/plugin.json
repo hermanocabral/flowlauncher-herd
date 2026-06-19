@@ -4,7 +4,7 @@
     "Name": "Herd",
     "Description": "Herd your apps into groups and launch the whole flock at once.",
     "Author": "Hermano Cabral",
-    "Version": "0.1.0",
+    "Version": "0.1.1",
     "Language": "csharp",
     "Website": "https://github.com/hermanocabral/flowlauncher-herd",
     "IcoPath": "Images\\icon.png",
