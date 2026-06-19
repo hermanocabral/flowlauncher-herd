@@ -51,6 +51,9 @@ task reload
 2. Start typing a group name to filter the list.
 3. Press <kbd>Enter</kbd> to launch every enabled app in the group.
 
+The preview panel on the right shows the group's launch mode and the full app list (with
+*as admin* / *disabled* markers), so you can confirm what will start before pressing Enter.
+
 If you have no groups yet, Herd shows a **"No app groups yet"** result — press
 <kbd>Enter</kbd> on it to open settings and create your first group.
 
@@ -72,7 +75,7 @@ the settings window.
 | ------------ | -------------------------------------------------------------------- |
 | Name         | Shown in the launcher and matched against your search text.          |
 | Description  | Shown in the result subtitle and the hover tooltip.                  |
-| Custom icon  | Optional `.png`/`.ico`/`.jpg` shown instead of the default sheep (**Change… / Use default**). |
+| Icon         | Optional custom `.png`/`.ico`/`.jpg` (**Change… / Use default**). If unset, Herd shows the first app's icon, falling back to the sheep. |
 | Launch       | **All at once**, or **one by one** with a delay between each (see [Launch modes](#launch-modes)). |
 
 ## App options

@@ -80,7 +80,7 @@ task reload           # restart Flow Launcher to pick it up
 ## Usage
 
 1. Open Flow and type your keyword (default `herd`).
-2. Start typing a group name to filter; the panel shows the group's description and apps.
+2. Start typing a group name to filter; the preview panel lists the apps and the launch mode.
 3. Press <kbd>Enter</kbd> to launch every enabled app in the group.
 
 The first time you use it, Herd shows a *"No app groups yet"* hint — press <kbd>Enter</kbd> on
@@ -95,7 +95,7 @@ Open **Flow Launcher Settings → Plugins → Herd**. On the left is your list o
 | ------------- | ------------------------------------------------------------------------- |
 | Name          | Shown in the launcher and matched against your search.                    |
 | Description   | Shown in the result subtitle and tooltip.                                 |
-| Custom icon   | Optional image shown instead of the default sheep.                        |
+| Icon          | Optional custom image. If unset, Herd uses the first app's icon, falling back to the sheep. |
 | Launch        | **All at once**, or **one by one** with a delay between each.             |
 
 Each app is a card — click it to expand its options:
