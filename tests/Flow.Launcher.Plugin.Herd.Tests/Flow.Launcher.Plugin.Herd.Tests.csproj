@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- net9.0-windows so we can reference the net7.0-windows WPF plugin assembly. -->
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="TUnit" Version="1.5*" />
+    <!-- The plugin excludes the Flow API assembly from its output (the host provides it),
+         so the test host needs its own copy to load plugin types at runtime. -->
+    <PackageReference Include="Flow.Launcher.Plugin" Version="4.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Flow.Launcher.Plugin.Herd\Flow.Launcher.Plugin.Herd.csproj" />
+  </ItemGroup>
+
+</Project>

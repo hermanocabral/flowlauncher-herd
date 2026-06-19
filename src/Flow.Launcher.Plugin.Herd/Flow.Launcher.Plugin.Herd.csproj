@@ -1,0 +1,44 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+
+    <AssemblyName>Flow.Launcher.Plugin.Herd</AssemblyName>
+    <RootNamespace>Flow.Launcher.Plugin.Herd</RootNamespace>
+    <Authors>Hermano Cabral</Authors>
+    <RepositoryUrl>https://github.com/hermanocabral/flowlauncher-herd</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/hermanocabral/flowlauncher-herd</PackageProjectUrl>
+    <PackageTags>flow-launcher flow-plugin herd app-groups launcher</PackageTags>
+
+    <!-- Flow loads the plugin's own dependencies from its output folder. -->
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+  </PropertyGroup>
+
+  <!-- Release output is what we ship: no PDBs. -->
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+    <DebugSymbols>false</DebugSymbols>
+    <DebugType>None</DebugType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="plugin.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\icon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Provided by the Flow Launcher host at runtime; do not copy to output. -->
+    <PackageReference Include="Flow.Launcher.Plugin" Version="4.4.0">
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+</Project>

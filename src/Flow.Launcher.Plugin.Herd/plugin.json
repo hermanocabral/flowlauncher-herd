@@ -1,0 +1,12 @@
+{
+    "ID": "B8F83948-083D-469D-89DF-3A570F7BF975",
+    "ActionKeyword": "herd",
+    "Name": "Herd",
+    "Description": "Herd your apps into groups and launch the whole flock at once.",
+    "Author": "Hermano Cabral",
+    "Version": "0.1.0",
+    "Language": "csharp",
+    "Website": "https://github.com/hermanocabral/flowlauncher-herd",
+    "IcoPath": "Images\\icon.png",
+    "ExecuteFileName": "Flow.Launcher.Plugin.Herd.dll"
+}

@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Flow.Launcher.Plugin.Herd/Flow.Launcher.Plugin.Herd.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Flow.Launcher.Plugin.Herd.Tests/Flow.Launcher.Plugin.Herd.Tests.csproj" />
+  </Folder>
+</Solution>
