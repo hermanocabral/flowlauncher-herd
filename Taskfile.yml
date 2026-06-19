@@ -80,15 +80,13 @@ tasks:
     desc: Build and install the plugin into the local Flow Launcher (stops Flow to replace the DLL)
     deps: [publish]
     cmds:
-      # Flow must be closed first — a running instance holds the plugin DLL locked, so the copy
-      # would silently leave the old build in place. Run `task dev` (or `task reload`) to restart it.
-      - powershell -NoProfile -Command "Get-Process Flow.Launcher -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue; Start-Sleep -Milliseconds 800; $d='{{.FLOW_PLUGINS}}/{{.PLUGIN_NAME}}'; if (Test-Path $d) { Remove-Item -Recurse -Force $d }; Copy-Item -Recurse -Force '{{.PUBLISH_DIR}}' $d"
-      - 'echo Installed to {{.FLOW_PLUGINS}}/{{.PLUGIN_NAME}}'
+      # Logic lives in a .ps1 so PowerShell variables aren't eaten by the task shell interpreter.
+      - powershell -NoProfile -ExecutionPolicy Bypass -File scripts/install-local.ps1 -Source "{{.PUBLISH_DIR}}" -Dest "{{.FLOW_PLUGINS}}/{{.PLUGIN_NAME}}"
 
   uninstall:local:
     desc: Remove the plugin from the local Flow Launcher
     cmds:
-      - powershell -NoProfile -Command "$d='{{.FLOW_PLUGINS}}/{{.PLUGIN_NAME}}'; if (Test-Path $d) { Remove-Item -Recurse -Force $d }"
+      - powershell -NoProfile -ExecutionPolicy Bypass -File scripts/uninstall-local.ps1 -Dest "{{.FLOW_PLUGINS}}/{{.PLUGIN_NAME}}"
 
   reload:
     desc: Restart Flow Launcher (picks up plugin changes)
