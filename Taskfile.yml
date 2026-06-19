@@ -11,10 +11,11 @@ vars:
   PUBLISH_DIR: dist/publish
   VERSION:
     sh: powershell -NoProfile -Command "(Get-Content '{{.PLUGIN_DIR}}/plugin.json' -Raw | ConvertFrom-Json).Version"
+  # Normalise backslashes to forward slashes so the paths survive shell re-interpolation.
   FLOW_PLUGINS:
-    sh: echo "$APPDATA/FlowLauncher/Plugins"
+    sh: echo "${APPDATA//\\//}/FlowLauncher/Plugins"
   FLOW_EXE:
-    sh: echo "$LOCALAPPDATA/FlowLauncher/Flow.Launcher.exe"
+    sh: echo "${LOCALAPPDATA//\\//}/FlowLauncher/Flow.Launcher.exe"
 
 tasks:
   default:
@@ -59,13 +60,13 @@ tasks:
     desc: Remove build and dist artifacts
     cmds:
       - dotnet clean --nologo || true
-      - powershell -NoProfile -Command "Remove-Item -Recurse -Force '{{.DIST}}' -ErrorAction SilentlyContinue"
+      - powershell -NoProfile -Command "if (Test-Path '{{.DIST}}') { Remove-Item -Recurse -Force '{{.DIST}}' }"
 
   publish:
     desc: Publish the plugin to dist/publish
     deps: [test]
     cmds:
-      - powershell -NoProfile -Command "Remove-Item -Recurse -Force '{{.PUBLISH_DIR}}' -ErrorAction SilentlyContinue"
+      - powershell -NoProfile -Command "if (Test-Path '{{.PUBLISH_DIR}}') { Remove-Item -Recurse -Force '{{.PUBLISH_DIR}}' }"
       - dotnet publish {{.PLUGIN_DIR}} -c Release -o {{.PUBLISH_DIR}} --nologo
 
   package:
@@ -79,19 +80,18 @@ tasks:
     desc: Build and install the plugin into the local Flow Launcher
     deps: [publish]
     cmds:
-      - powershell -NoProfile -Command "Remove-Item -Recurse -Force '{{.FLOW_PLUGINS}}/{{.PLUGIN_NAME}}' -ErrorAction SilentlyContinue"
-      - powershell -NoProfile -Command "Copy-Item -Recurse -Force '{{.PUBLISH_DIR}}' '{{.FLOW_PLUGINS}}/{{.PLUGIN_NAME}}'"
+      - powershell -NoProfile -Command "$d='{{.FLOW_PLUGINS}}/{{.PLUGIN_NAME}}'; if (Test-Path $d) { Remove-Item -Recurse -Force $d }; Copy-Item -Recurse -Force '{{.PUBLISH_DIR}}' $d"
       - 'echo Installed to {{.FLOW_PLUGINS}}/{{.PLUGIN_NAME}}'
 
   uninstall:local:
     desc: Remove the plugin from the local Flow Launcher
     cmds:
-      - powershell -NoProfile -Command "Remove-Item -Recurse -Force '{{.FLOW_PLUGINS}}/{{.PLUGIN_NAME}}' -ErrorAction SilentlyContinue"
+      - powershell -NoProfile -Command "$d='{{.FLOW_PLUGINS}}/{{.PLUGIN_NAME}}'; if (Test-Path $d) { Remove-Item -Recurse -Force $d }"
 
   reload:
     desc: Restart Flow Launcher (picks up plugin changes)
     cmds:
-      - powershell -NoProfile -Command "Get-Process Flow.Launcher -ErrorAction SilentlyContinue | Stop-Process -Force; Start-Sleep -Seconds 1; Start-Process '{{.FLOW_EXE}}'"
+      - powershell -NoProfile -Command "Get-Process Flow.Launcher -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue; Start-Sleep -Seconds 1; Start-Process '{{.FLOW_EXE}}'; exit 0"
 
   dev:
     desc: Install locally and restart Flow Launcher
