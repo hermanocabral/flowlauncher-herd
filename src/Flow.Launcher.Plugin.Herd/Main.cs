@@ -23,6 +23,8 @@ public class Main : IAsyncPlugin, ISettingProvider
     public Task InitAsync(PluginInitContext context)
     {
         _context = context;
+        // Load exactly once: Flow's storage rebinds its Data object on each Load, so a second
+        // load would desync this instance from the one the settings panel edits and queries read.
         _settings = context.API.LoadSettingJsonStorage<HerdSettings>();
         _launcher = new GroupLauncher(new ProcessLauncher());
         _query = new QueryService(
