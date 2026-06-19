@@ -1,4 +1,3 @@
-using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using Flow.Launcher.Plugin.Herd.Models;
@@ -8,8 +7,9 @@ using Microsoft.Win32;
 namespace Flow.Launcher.Plugin.Herd.Views;
 
 /// <summary>
-/// WPF settings panel. Bindings keep the models in sync; structural edits go through
-/// <see cref="SettingsViewModel"/>. Text edits are persisted when the panel unloads.
+/// WPF settings panel. The group list and per-app cards bind to the models; structural
+/// edits go through <see cref="SettingsViewModel"/>. Advanced per-app fields live in an
+/// expander so the common case stays simple. Text edits persist when the panel unloads.
 /// </summary>
 public partial class SettingsControl : UserControl
 {
@@ -22,6 +22,9 @@ public partial class SettingsControl : UserControl
         InitializeComponent();
         Unloaded += (_, _) => _vm.Save();
     }
+
+    private static AppEntry? EntryOf(object sender) =>
+        (sender as FrameworkElement)?.DataContext as AppEntry;
 
     private void AddGroup_Click(object sender, RoutedEventArgs e) => _vm.AddGroup();
 
@@ -46,6 +49,15 @@ public partial class SettingsControl : UserControl
         }
     }
 
+    private void AddApp_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is Button { ContextMenu: { } menu })
+        {
+            menu.PlacementTarget = (UIElement)sender;
+            menu.IsOpen = true;
+        }
+    }
+
     private void AddFile_Click(object sender, RoutedEventArgs e)
     {
         var dialog = new OpenFileDialog { Title = "Pick an application or file", CheckFileExists = true };
@@ -64,18 +76,26 @@ public partial class SettingsControl : UserControl
         }
     }
 
-    private void AddUrl_Click(object sender, RoutedEventArgs e)
+    private void AddUrl_Click(object sender, RoutedEventArgs e) => _vm.AddApp("https://");
+
+    private void BrowseTarget_Click(object sender, RoutedEventArgs e)
     {
-        var entry = _vm.AddApp("https://");
-        if (entry is not null)
+        if (EntryOf(sender) is not { } entry)
         {
-            AppsGrid.SelectedItem = entry;
+            return;
+        }
+
+        var dialog = new OpenFileDialog { Title = "Pick an application or file", CheckFileExists = true };
+        if (dialog.ShowDialog() == true)
+        {
+            entry.Target = dialog.FileName;
+            _vm.Save();
         }
     }
 
-    private void SetWorkingDir_Click(object sender, RoutedEventArgs e)
+    private void BrowseWorkingDir_Click(object sender, RoutedEventArgs e)
     {
-        if (AppsGrid.SelectedItem is not AppEntry entry)
+        if (EntryOf(sender) is not { } entry)
         {
             return;
         }
@@ -90,7 +110,7 @@ public partial class SettingsControl : UserControl
 
     private void MoveUp_Click(object sender, RoutedEventArgs e)
     {
-        if (AppsGrid.SelectedItem is AppEntry entry)
+        if (EntryOf(sender) is { } entry)
         {
             _vm.MoveAppUp(entry);
         }
@@ -98,7 +118,7 @@ public partial class SettingsControl : UserControl
 
     private void MoveDown_Click(object sender, RoutedEventArgs e)
     {
-        if (AppsGrid.SelectedItem is AppEntry entry)
+        if (EntryOf(sender) is { } entry)
         {
             _vm.MoveAppDown(entry);
         }
@@ -106,7 +126,7 @@ public partial class SettingsControl : UserControl
 
     private void RemoveApp_Click(object sender, RoutedEventArgs e)
     {
-        if (AppsGrid.SelectedItem is AppEntry entry)
+        if (EntryOf(sender) is { } entry)
         {
             _vm.RemoveApp(entry);
         }
@@ -127,6 +147,15 @@ public partial class SettingsControl : UserControl
         if (dialog.ShowDialog() == true)
         {
             _vm.SelectedGroup.IconPath = dialog.FileName;
+            _vm.Save();
+        }
+    }
+
+    private void ClearIcon_Click(object sender, RoutedEventArgs e)
+    {
+        if (_vm.SelectedGroup is not null)
+        {
+            _vm.SelectedGroup.IconPath = null;
             _vm.Save();
         }
     }
