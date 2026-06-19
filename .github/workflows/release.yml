@@ -1,0 +1,60 @@
+name: Release
+
+# Tag a version (e.g. v0.1.0) to build, test, package and publish the plugin zip.
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            9.0.x
+            10.0.x
+
+      - name: Derive version from tag
+        id: version
+        shell: pwsh
+        run: |
+          $v = "${{ github.ref_name }}".TrimStart('v')
+          "version=$v" >> $env:GITHUB_OUTPUT
+          Write-Host "Release version: $v"
+
+      - name: Stamp plugin.json version
+        shell: pwsh
+        run: |
+          $path = "src/Flow.Launcher.Plugin.Herd/plugin.json"
+          $json = Get-Content $path -Raw | ConvertFrom-Json
+          $json.Version = "${{ steps.version.outputs.version }}"
+          ($json | ConvertTo-Json -Depth 10) | Set-Content $path -Encoding UTF8
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Test
+        run: dotnet test --configuration Release
+
+      - name: Publish
+        run: dotnet publish src/Flow.Launcher.Plugin.Herd -c Release -o dist/publish
+
+      - name: Package
+        shell: pwsh
+        run: |
+          Compress-Archive -Path dist/publish/* `
+            -DestinationPath "dist/Flow.Launcher.Plugin.Herd-${{ steps.version.outputs.version }}.zip" -Force
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/Flow.Launcher.Plugin.Herd-${{ steps.version.outputs.version }}.zip
+          generate_release_notes: true

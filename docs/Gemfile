@@ -1,0 +1,5 @@
+source "https://rubygems.org"
+
+# Mirrors GitHub Pages' build environment so `bundle exec jekyll serve` matches production.
+gem "github-pages", group: :jekyll_plugins
+gem "webrick"
